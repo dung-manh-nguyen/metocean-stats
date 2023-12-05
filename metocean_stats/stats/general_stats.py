@@ -263,4 +263,35 @@ def table_monthly_min_mean_max(data, var,output_file='montly_min_mean_max.txt') 
     return
 
 
+def make_VN_map(lon0,lat0,outfile): # make_map(lon1,lon2,lat1,lat2,outfile)
 
+    lon1 = 98
+    lon2 = 122
+    lat1 = 0
+    lat2 = 24 
+    
+    plt.figure(figsize=(11,7))
+    m = Basemap(llcrnrlat=lat1,urcrnrlat=lat2,llcrnrlon=lon1,urcrnrlon=lon2,resolution='i')
+    m.drawcoastlines(linewidth=0.5)
+    m.drawcountries() 
+    m.fillcontinents()
+    parallels = np.arange(-90,90,1)
+    m.drawparallels(parallels,labels=[1,0,0,0],fontsize=10)
+    meridians = np.arange(0,360,2)
+    m.drawmeridians(meridians,labels=[0,0,0,1],fontsize=10)
+    
+    
+    
+    #from matplotlib.font_manager import FontProperties
+    #font0 = FontProperties()
+    #font = font0.copy()
+    #font.set_weight('bold')
+    
+    m.plot(lon0, lat0, 'ro', markersize=5)
+    #plt.text((lon1+lon2)/2+0.2,(lat1+lat2)/2+0.2,'Test', fontproperties=font) 
+    
+    
+    
+    plt.savefig(outfile,dpi=100,facecolor='white',bbox_inches='tight')
+    
+    return 
