@@ -13,3 +13,12 @@ dependencies:
   - seaborn>=0.12.2
   - metocean-api
   - basemap
+  - calendar
+  - math
+  - shutil
+  - os
+  - dataframe_image
+  - netCDF4
+  - pickle
+  - pyextremes
+  - datetime
