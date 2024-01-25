@@ -2159,8 +2159,10 @@ def find_NORA10_depth(lon0, lat0):
     return depth[closest_idx],lst[closest_idx]
     
     
-    def download_NK800_2(lon0,lat0,path):
-    # this download u_eastward,v_northward and save to file 
+def download_NK800_2(lon0,lat0,path):
+    # this download u_eastward,v_northward and save to folder path 
+    # coordinate of location of interest lon0, lat 0
+    # path: a folder to save files
     try:
         os.mkdir(path) 
     except:
@@ -2189,7 +2191,9 @@ def find_NORA10_depth(lon0, lat0):
             shutil.move(outf, path)
             
 def load_NK800_2(path):
-    # load u and v and merge
+    # load u and v from a path folder and merge
+    # return time, u, v and depth 
+    
     files = getListOfFiles(path)
     files.sort()
     
