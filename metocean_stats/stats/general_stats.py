@@ -269,3 +269,67 @@ def table_monthly_min_mean_max(data, var,output_file='montly_min_mean_max.txt') 
         os.rename(temp_file, output_file)
 
     return
+
+
+def RVE_of_EXP_GEV_GUM_LoNo(df,period,distribution='EXP',method='default',threshold='default'):
+    
+    # df : dataframe, should be daily or hourly
+    # period: a value, or an array return periods =np.array([1,10,100,10000],dtype=float)
+    # distribution: 'EXP', 'GEV', 'GUM' and 'LoNo'
+    # method: 'default', 'AM' or 'POT'
+    # threshold='default'(min anual maxima), or a value 
+    
+    import scipy.stats as stats
+    from pyextremes import get_extremes
+    
+    # get data for fitting 
+    if method == 'default' : # all data 
+        data = df.values
+    elif method == 'AM' : # annual maxima
+        annual_maxima = df.resample('Y').max() # get annual maximum 
+        data = annual_maxima
+    elif method == 'POT' : # Peak over threshold 
+        if threshold == 'default' :
+            annual_maxima = df.resample('Y').max() 
+            threshold=annual_maxima.min()
+        data = get_extremes(df, method="POT", threshold=threshold, r="48H")
+    else:
+        print ('Please check the method of filtering data')
+    
+    # Return periods in K-th element 
+    for i in range(len(period)) :
+        if period[i] == 1 : 
+            period[i] = 1.5873
+    if period == 1 : 
+        period = 1.5873
+            
+    duration = (df.index[-1]-df.index[0]).days + 1 
+    length_data = data.shape[0]
+    interval = duration*24/length_data # in hours 
+    period = period*365.2422*24/interval # years is converted to K-th
+    
+    # Fit a distribution to the data
+    if distribution == 'EXP' : 
+        from scipy.stats import expon
+        loc, scale = expon.fit(data)
+        value = expon.isf(1/period, loc, scale)
+        #value = expon.ppf(1 - 1 / period, loc, scale)
+    elif distribution == 'GEV' :
+        from scipy.stats import genextreme
+        shape, loc, scale = genextreme.fit(data) # fit data   
+        value = genextreme.isf(1/period, shape, loc, scale)
+        #value = genextreme.ppf(1 - 1 / period, shape, loc, scale)
+    elif distribution == 'GUM' :
+        from scipy.stats import gumbel_r 
+        loc, scale = gumbel_r.fit(data) # fit data
+        value = gumbel_r.isf(1/period, loc, scale)
+        #value = gumbel_r.ppf(1 - 1 / period, loc, scale)
+    elif distribution == 'LoNo' :
+        from scipy.stats import lognorm 
+        shape, loc, scale = lognorm.fit(data)
+        value = lognorm.isf(1/period, shape, loc, scale)
+        #value = lognorm.ppf(1 - 1 / period, shape, loc, scale)
+    else:
+        print ('Please check the distribution')    
+    
+    return value  
