@@ -3,6 +3,7 @@ channels:
   - conda-forge
 dependencies:
   - python=>3.9
+  - xarray
   - matplotlib>=3.1
   - numpy>=1.17
   - pandas
@@ -12,13 +13,5 @@ dependencies:
   - windrose
   - seaborn>=0.12.2
   - metocean-api
-  - basemap
-  - calendar
-  - math
-  - shutil
-  - os
-  - dataframe_image
-  - netCDF4
-  - pickle
   - pyextremes
-  - datetime
+  - virocon
