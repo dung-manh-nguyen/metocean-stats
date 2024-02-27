@@ -2,10 +2,8 @@ import os
 import math
 import numpy as np
 import pandas as pd
-import dataframe_image as dfi 
 import seaborn as sns
 import matplotlib.pyplot as plt
-from mpl_toolkits.basemap import Basemap
 import calendar
 from math import floor,ceil
 
