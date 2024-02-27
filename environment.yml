@@ -15,5 +15,3 @@ dependencies:
   - metocean-api
   - pyextremes
   - virocon
-  - dataframe-image
-  - basemap
