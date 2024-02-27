@@ -388,3 +388,37 @@ def RVE_Weibull(df,period,method_weibull='3P',method_data='default',threshold='d
     value = stats.weibull_min.isf(1/period, shape, loc, scale)
     
     return value
+
+def readNora10File(file):
+      
+    df = pd.read_csv(file, delim_whitespace=True, header=3) # sep=' ', header=None,0,1,2,3
+    df.index= pd.to_datetime(df.YEAR*1000000+df.M*10000+df.D*100+df.H,format='%Y%m%d%H')
+    df['hs'] = df['HS']
+    df['tp'] = Tp_correction(df.TP.values)
+    df['w10'] = df['W10']
+    df['d10'] = df['D10'] 
+    df2 = df.filter(['hs', 'tp','w10','d10']) # ['HS', 'TP','W10','D10'], axis=1
+    
+    #df2 = df.filter(['HS', 'TP','W10','D10']) # , axis=1
+    
+    #df2=df
+    
+    return df2
+
+
+def Tp_correction(Tp):  ### Tp_correction
+
+    # This function will correct the Tp from ocean model which are vertical straight lines in Hs-Tp distribution 
+    # Example of how to use 
+    # 
+    # df = pd.read_csv('NORA3_wind_wave_lon3.21_lat56.55_19930101_20021231.csv',comment='#',index_col=0, parse_dates=True)
+    # df['tp_corr'] = df.tp.values # new Tp = old Tp
+    # Tp_correction(df.tp_corr.values) # make change to the new Tp
+    #
+
+    new_Tp=1+np.log(Tp/3.244)/0.09525
+    index = np.where(Tp>=3.2) # indexes of Tp
+    r = np.random.uniform(low=-0.5, high=0.5, size=len(Tp[index])) 
+    Tp[index]=np.round(3.244*np.exp(0.09525*(new_Tp[index]-1-r)),1)
+    
+    return Tp 
